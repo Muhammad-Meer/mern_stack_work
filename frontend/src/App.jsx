@@ -1,9 +1,15 @@
-import React from 'react'
+import Register from "./components/Register";
+// import Login from "./components/Login";
+// import Logout from "./components/Logout";
 
-const App = () => {
+function App() {
   return (
-    <div>App</div>
-  )
+    <div>
+      <Register />
+      {/* <Login />
+      <Logout /> */}
+    </div>
+  );
 }
 
-export default App
+export default App;
