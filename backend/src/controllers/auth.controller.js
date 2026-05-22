@@ -22,7 +22,9 @@ async function userRegisterController(req, res) {
     const UserisExist = await UserSchema.findOne({ email: email });
 
     if (UserisExist) {
-      console.log(`message: User already exists with this email`)
+      return res.status(400).json({
+        message: "User already exists"
+      })
     }
 
     const HashedPassword = await bcrypt.hash(password, 10);
@@ -32,6 +34,18 @@ async function userRegisterController(req, res) {
       email: email,
       password: HashedPassword,
     })
+
+    const token = jwt.sign(
+      { id: newUser._id },
+      process.env.JWT_SECRET_KEY,
+      { expiresIn: "7d" }
+    );
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false,
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    });
     return res.status(201).json({
       message: "User registered successfully",
       username: username,
@@ -74,6 +88,19 @@ async function userLoginController(req, res) {
       });
     }
 
+
+    const token = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRET_KEY,
+      { expiresIn: "7d" }
+    );
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false,
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    });
+
     return res.status(200).json({
       message: "Login successful",
       user: {
@@ -92,12 +119,19 @@ async function userLoginController(req, res) {
 async function userLogoutController(req, res) {
   try {
 
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: true, // production mein HTTPS ke liye
+    });
+
     return res.status(200).json({
+      success: true,
       message: "Logout successful"
     });
 
   } catch (error) {
     return res.status(500).json({
+      success: false,
       message: error.message
     });
   }
@@ -105,4 +139,5 @@ async function userLogoutController(req, res) {
 
 
 module.exports = { userRegisterController, userLoginController, userLogoutController }
+
 
