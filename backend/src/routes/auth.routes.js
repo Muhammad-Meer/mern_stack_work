@@ -20,7 +20,7 @@ authRouter.post('/user/register', userRegisterController);
 
 authRouter.post('/user/login', userLoginController);
 
-authRouter.post('/user/logout', userLogoutController);
+authRouter.get('/user/logout', userLogoutController);
 
 
 
@@ -30,7 +30,7 @@ authRouter.post('/food-partner/register', FoodPartnerRegisterController);
 
 authRouter.post('/food-partner/login', FoodPartnerLoginController);
 
-authRouter.post('/food-partner/logout', FoodPartnerLogoutController);
+authRouter.get('/food-partner/logout', FoodPartnerLogoutController);
 
 
 
