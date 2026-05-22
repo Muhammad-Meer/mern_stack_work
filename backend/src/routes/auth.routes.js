@@ -4,14 +4,12 @@ const authRouter = express.Router();
 const {
   userRegisterController,
   userLoginController,
-  userLogoutController
-} = require('../controllers/auth.controller');
-
-const {
+  userLogoutController,
   FoodPartnerRegisterController,
   FoodPartnerLoginController,
   FoodPartnerLogoutController
-} = require('../controllers/food.partner.controller');
+} = require('../controllers/auth.controller');
+
 
 
 // ================= USER AUTH ROUTES =================
