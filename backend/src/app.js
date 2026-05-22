@@ -1,6 +1,6 @@
 const express = require('express');
 const authRouter = require('./routes/auth.routes');
-const cors = require('cors');
+const createFoodrouter = require('./routes/food.partner.routes');
 require('dotenv').config();
 
 
@@ -10,12 +10,14 @@ app.use(express.json());
 
 
 
-app.use(cors({
-  origin: "http://localhost:5173",
-  credentials: true
-}));
+
 
 
 app.use('/api/auth', authRouter);
+app.use('/api/Food',createFoodrouter );
+
+
+
+
 module.exports = app;
 
