@@ -1,4 +1,5 @@
 const express = require('express');
+const authRouter = require('./routes/auth.routes');
 const cors = require('cors');
 require('dotenv').config();
 
@@ -6,35 +7,9 @@ require('dotenv').config();
 const app = express();
 
 app.use(cors());
+app.use(express.json());
 
-const users = [
-  "Ali",
-  "Ahmed",
-  "Usman",
-  "Hassan",
-  "Hussain",
-  "Zain",
-  "Bilal",
-  "Hamza",
-  "Saad",
-  "Taha",
-  "Ayan",
-  "Farhan",
-  "Talha",
-  "Danish",
-  "Shayan",
-  "Abdullah",
-  "Rehan",
-  "Imran",
-  "Shahzaib",
-  "Kashan"
-];
 
-app.get('/users', (req, res) => {
-    return res.json({
-      message: "successfully fetched users",
-      data: users
-    })
-})
+app.use('/api/auth', authRouter);
 module.exports = app;
 
