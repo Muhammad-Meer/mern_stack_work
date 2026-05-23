@@ -1,9 +1,7 @@
-require('dotenv').config(); // ← ye sabse upar hona chahiye 
 const { uploadFile } = require('../services/imagekit.service');
 const { v4: uuid } = require('uuid');
 
 async function createFood(req, res) {
-  console.log(req.file, req.file.buffer);
   try {
     const fileUploadResult = await uploadFile(req.file.buffer, uuid());
 
