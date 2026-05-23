@@ -1,5 +1,6 @@
 const ImageKit = require('@imagekit/nodejs');
 
+
 const imagekit = new ImageKit({
   publicKey: process.env.IMAGE_KIT_PUBLIC_KEY,
   urlEndpoint: process.env.IMAGE_KIT_ENDPOINT,
@@ -12,8 +13,11 @@ async function uploadFile(file, fileName) {
     fileName: fileName,
   });
 
+  // ✅ Fixed: result.file → result.fileId
+  console.log(result.fileId, result.fileName, result.url);
+
   return result;
-  console.log(result.file, resulr.fileName,result.url)
 }
 
+// ✅ Fixed: export as an object so it matches the import style
 module.exports = { uploadFile };
