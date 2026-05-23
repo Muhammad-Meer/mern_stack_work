@@ -1,4 +1,5 @@
 const FoodPartnerModel = require('../models/food.partner.model');
+const usermodel = require('../models/user.model');
 const jwt = require('jsonwebtoken');
 
 const authMiddleware = async (req, res, next) => {
@@ -35,4 +36,34 @@ const authMiddleware = async (req, res, next) => {
     }
 };
 
-module.exports = {authMiddleware};
+const userAuthMiddleware = async (req, res, next) => {
+    try {
+        const token = req.cookies?.token;
+
+        if (!token) {
+            return res.status(401).json({ success: false, message: "Please login first. No token provided." });
+        }
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+
+        const user = await usermodel.findById(decoded.id);
+
+        if (!user) {
+            return res.status(401).json({ success: false, message: "user not found, please login again" });
+        }
+
+        req.user = user; 
+        
+        next(); 
+        
+    } catch (error) {
+        if (error.name === 'TokenExpiredError') {
+            return res.status(401).json({ success: false, message: "Session expired, please login again" });
+        }
+        return res.status(401).json({ success: false, message: "Invalid token, please login again" });
+    }
+};
+
+
+
+module.exports = {authMiddleware, userAuthMiddleware};
