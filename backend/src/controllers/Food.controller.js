@@ -3,12 +3,13 @@ const { uploadFile } = require('../services/imagekit.service');
 const { v4: uuid } = require('uuid');
 
 async function createFood(req, res) {
+  console.log(req.file, req.file.buffer);
   try {
     const fileUploadResult = await uploadFile(req.file.buffer, uuid());
 
     return res.json({
       success: true,
-      image: fileUploadResult,
+      video: fileUploadResult,
     });
 
   } catch (error) {
