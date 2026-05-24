@@ -28,7 +28,7 @@ export default function FoodPartnerLogin() {
         </form>
 
         <div className="auth-footer">
-          New partner? <a href="#">Register</a>
+          New partner? <a href="/food-partner/register">Register</a>
         </div>
       </div>
     </div>

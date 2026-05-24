@@ -28,7 +28,7 @@ export default function UserLogin() {
         </form>
 
         <div className="auth-footer">
-          Don’t have an account? <a href="#">Register</a>
+          Don’t have an account? <a href="/user/register">Register</a>
         </div>
       </div>
     </div>

@@ -33,7 +33,7 @@ export default function UserRegister() {
         </form>
 
         <div className="auth-footer">
-          Already have an account? <a href="#">Login</a>
+          Already have an account? <a href="/user/login">Login</a>
         </div>
       </div>
     </div>

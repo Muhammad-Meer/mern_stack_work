@@ -33,7 +33,7 @@ export default function FoodPartnerRegister() {
         </form>
 
         <div className="auth-footer">
-          Already registered? <a href="#">Login</a>
+          Already registered? <a href="/food-partner/login">Login</a>
         </div>
       </div>
     </div>
