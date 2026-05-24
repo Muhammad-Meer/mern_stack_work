@@ -1,4 +1,3 @@
-// FoodPartnerRegister.jsx
 
 import "../../style/auth.css";
 
