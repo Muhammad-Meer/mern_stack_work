@@ -1,2 +1,2 @@
-src/
-server.js
+node_modules/
+.env
