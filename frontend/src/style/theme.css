@@ -1,0 +1,28 @@
+/* theme.css */
+
+:root {
+  --bg: #ffffff;
+  --card-bg: #f8f9fa;
+  --text: #111827;
+  --text-light: #6b7280;
+  --border: #e5e7eb;
+  --primary: #111827;
+  --primary-hover: #1f2937;
+  --input-bg: #ffffff;
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  --radius: 14px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f172a;
+    --card-bg: #111827;
+    --text: #f9fafb;
+    --text-light: #9ca3af;
+    --border: #1f2937;
+    --primary: #f9fafb;
+    --primary-hover: #e5e7eb;
+    --input-bg: #1e293b;
+    --shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+  }
+}
