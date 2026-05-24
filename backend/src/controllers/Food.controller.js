@@ -28,7 +28,15 @@ async function createFood(req, res) {
 }
 
 async function getFooditems(req , res) {
-  
+ try{
+    const fooditems = await Foodmodel.find({}) 
+    return res.json({
+      message: "Food items retrived successfully",
+      fooditems: fooditems,
+    })
+ } catch(error) {
+    res.status(500).json({ error: 'Something went wrong ' + error.message })
+ }
 }
 
 module.exports = { createFood,getFooditems };
