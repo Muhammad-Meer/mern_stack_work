@@ -19,6 +19,7 @@ export default function UserRegister() {
     try {
       const response = await axios.post(
         "http://localhost:3200/api/auth/user/register",
+
         {
              username: fullName,
              email:email,

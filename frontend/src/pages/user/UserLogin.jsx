@@ -1,13 +1,12 @@
 import "../../style/auth.css";
-import{ useState} from 'react';
+import { useState } from 'react';
 import axios from 'axios';
-import { useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 
 export default function UserLogin() {
 
 
-  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -17,7 +16,18 @@ export default function UserLogin() {
     e.preventDefault();
 
     try {
-       
+      const response = await axios.post(
+        "http://localhost:3200/api/auth/user/login",
+
+        {
+          email: email,
+          password: password,
+        },
+        { withCredentials: true }
+      );
+      console.log(response.data)
+
+      useNavigate("/")
     } catch (error) {
       console.log(error)
     }
@@ -34,12 +44,14 @@ export default function UserLogin() {
         <form className="auth-form">
           <div className="input-group">
             <label>Email</label>
-            <input type="email" placeholder="Enter your email" />
+            <input type="email" placeholder="Enter your email"
+              onChange={(e) => setEmail(e.target.value)} />
           </div>
 
           <div className="input-group">
             <label>Password</label>
-            <input type="password" placeholder="Enter your password" />
+            <input type="password" placeholder="Enter your password"
+              onChange={(e) => setPassword(e.target.value)} />
           </div>
 
           <button className="auth-btn">
