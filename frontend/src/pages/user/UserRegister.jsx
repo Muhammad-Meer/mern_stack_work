@@ -32,9 +32,15 @@ export default function UserRegister() {
           </button>
         </form>
 
+
+
+        <div className="auth-footer-routing"><a href="/food-partner/register">Register as a Food-Partner</a>
+        </div>
+
         <div className="auth-footer">
           Already have an account? <a href="/user/login">Login</a>
         </div>
+
       </div>
     </div>
   );

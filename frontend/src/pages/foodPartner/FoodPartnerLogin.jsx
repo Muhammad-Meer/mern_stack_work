@@ -27,6 +27,10 @@ export default function FoodPartnerLogin() {
           </button>
         </form>
 
+
+        <div className="auth-footer-routing"><a href="/user/login">Login as a User</a>
+        </div>
+
         <div className="auth-footer">
           New partner? <a href="/food-partner/register">Register</a>
         </div>

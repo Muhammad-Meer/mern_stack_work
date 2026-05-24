@@ -27,6 +27,12 @@ export default function UserLogin() {
           </button>
         </form>
 
+
+
+        <div className="auth-footer-routing"><a href="/food-partner/login">Login as a Food-Partner</a>
+        </div>
+
+        
         <div className="auth-footer">
           Don’t have an account? <a href="/user/register">Register</a>
         </div>
