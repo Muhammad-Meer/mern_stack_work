@@ -1,6 +1,7 @@
 import "../../style/auth.css";
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -10,22 +11,29 @@ export default function UserRegister() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-  const handleSubmit = async  (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-     // Here you would typically send the data to your backend API  };
-     try{
+    try {
+      const response = await axios.post(
+        "http://localhost:3200/api/auth/user/register",
+        {
+             username: fullName,
+             email:email,
+             password: password,
+        },
+        {withCredentials: true}
+      );
 
-      const response = await axios.post('http://localhost:3200/api/auth/user/register', {
-        fullName,
-        email,
-        password
-      })
-     } catch(error) {
-      res.status(500).json({message: "server error" + error.message})
-     }
-  }
+      console.log(response.data);
+
+         navigate("/")
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
 
   return (
     <div className="auth-container">

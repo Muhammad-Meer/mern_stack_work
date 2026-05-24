@@ -1,8 +1,28 @@
-// UserLogin.jsx
-
 import "../../style/auth.css";
+import{ useState} from 'react';
+import axios from 'axios';
+import { useNavigate} from "react-router-dom";
+
 
 export default function UserLogin() {
+
+
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+       
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return (
     <div className="auth-container">
       <div className="auth-card">
@@ -32,7 +52,7 @@ export default function UserLogin() {
         <div className="auth-footer-routing"><a href="/food-partner/login">Login as a Food-Partner</a>
         </div>
 
-        
+
         <div className="auth-footer">
           Don’t have an account? <a href="/user/register">Register</a>
         </div>
