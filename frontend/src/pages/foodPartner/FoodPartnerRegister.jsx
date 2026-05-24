@@ -1,6 +1,6 @@
 // FoodPartnerRegister.jsx
 
-import "./auth.css";
+import "../../style/auth.css";
 
 export default function FoodPartnerRegister() {
   return (

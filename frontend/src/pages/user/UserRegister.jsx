@@ -1,6 +1,6 @@
 // UserRegister.jsx
 
-import "./auth.css";
+import "../../style/auth.css";
 
 export default function UserRegister() {
   return (

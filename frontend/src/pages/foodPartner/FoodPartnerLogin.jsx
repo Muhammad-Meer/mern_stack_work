@@ -1,6 +1,6 @@
 // FoodPartnerLogin.jsx
 
-import "./auth.css";
+import "../../style/auth.css";
 
 export default function FoodPartnerLogin() {
   return (

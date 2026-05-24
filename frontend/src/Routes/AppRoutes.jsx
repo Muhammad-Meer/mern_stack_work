@@ -1,5 +1,9 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import UserRegister from '../pages/user/UserRegister'
+import UserLogin from '../pages/user/UserLogin'
+import FoodPartnerRegister from '../pages/foodPartner/FoodPartnerRegister'
+import FoodPartnerLogin from '../pages/foodPartner/FoodPartnerLogin'
 
 const AppRoutes = () => {
   return (
@@ -7,10 +11,10 @@ const AppRoutes = () => {
 
       <Router>
         <Routes>
-          <Route path="/user/register" element={<div>/user/register</div>} />
-          <Route path="/user/login" element={<div>/user/login</div>} />
-          <Route path="/food-partner/register" element={<div>/food-partner/register</div>} />
-          <Route path="/food-partner/login" element={<div>/food-partner/login</div>} />
+          <Route path="/user/register" element={<UserRegister />} />
+          <Route path="/user/login" element={<UserLogin />} />
+          <Route path="/food-partner/register" element={<FoodPartnerRegister />} />
+          <Route path="/food-partner/login" element={<FoodPartnerLogin />} />
         </Routes>
       </Router>
     </>

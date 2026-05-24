@@ -1,6 +1,6 @@
 // UserLogin.jsx
 
-import "./auth.css";
+import "../../style/auth.css";
 
 export default function UserLogin() {
   return (
