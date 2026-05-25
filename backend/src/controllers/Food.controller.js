@@ -19,6 +19,7 @@ async function createFood(req, res) {
     return res.json({
       message: "Food created successfully",
       food: CreateFood,
+      videoUrl: fileUploadResult.url,
     });
 
   } catch (error) {
