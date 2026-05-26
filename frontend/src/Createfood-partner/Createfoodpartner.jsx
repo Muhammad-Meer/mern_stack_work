@@ -1,48 +1,56 @@
-
 import "../style/video.css";
+import axios from "axios";
+import { useState } from "react";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-const videos = [
+const VIDEOS = [
   {
     id: 1,
-    video:
-      "https://www.w3schools.com/html/mov_bbb.mp4",
-    description:
-      "Premium fashion collection for modern streetwear lovers. Explore trending outfits and accessories now.",
+    src: "https://ik.imagekit.io/fhby9sue9/c75f2ba4-edb1-47ba-a834-a4f80a3065b7_rfMDtWhuL",
+    description: "Summer collection for your modern home.",
   },
   {
     id: 2,
-    video:
-      "https://www.w3schools.com/html/movie.mp4",
-    description:
-      "Discover amazing gadgets and tech products with fast delivery and exclusive offers available today.",
+    src: "https://ik.imagekit.io/fhby9sue9/71a88405-3aac-46a9-bf08-3da2e85873d0_ykLZluBli",
+    description: "Minimal furniture and smart storage ideas.",
   },
   {
     id: 3,
-    video:
-      "https://www.w3schools.com/html/mov_bbb.mp4",
-    description:
-      "Shop handmade products and unique lifestyle items carefully crafted for your everyday needs.",
+    src: "https://ik.imagekit.io/fhby9sue9/5481c1f7-1765-4937-9095-3add307be99b_DvJqWxEl2",
+    description: "Beauty products with premium quality finish.",
+  },
+  {
+    id: 4,
+    src: "https://ik.imagekit.io/fhby9sue9/d5af89cf-b17e-4991-a230-7e865171a64a_oI4Ex3NUl",
+    description: "Hair styling tools with modern technology.",
   },
 ];
 
-export default function HomePage() {
+
+
+export default function Createfoodpartner() {
+
+  const [videos , setvideos] =  useState(VIDEOS)
+  useEffect(() => {
+    axios.get('http://localhost:3200/api/Food')
+
+  })
   return (
-    <div className="reels-container">
-      {videos.map((item) => (
-        <div className="video-card" key={item.id}>
+    <div className="scroll-container">
+      {VIDEOS.map((video) => (
+        <div className="video-slide" key={video.id}>
           <video
-            className="reel-video"
-            src={item.video}
+            className="video-el"
+            src={video.src}
             autoPlay
             muted
             loop
             playsInline
           />
 
-          <div className="video-overlay">
-            <p className="video-description">{item.description}</p>
-
-            <button className="visit-btn">Visit Store</button>
+          <div className="overlay">
+            <p>{video.description}</p>
           </div>
         </div>
       ))}
