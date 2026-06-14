@@ -1,7 +1,11 @@
 import React from 'react';
 import '../styles/styles.css';
-
+import { Link} from 'react-router-dom';
+import axios from 'axios';
+ 
 const PartnerRegister = () => {
+
+
   return (
     <div className="auth-container">
       <div className="auth-header">
@@ -23,10 +27,7 @@ const PartnerRegister = () => {
           <label>Business Email</label>
           <input type="email" placeholder="owner@restaurant.com" />
         </div>
-        <div className="input-group">
-          <label>Phone Number</label>
-          <input type="tel" placeholder="03xx-xxxxxxx" />
-        </div>
+ 
         <div className="input-group">
           <label>Password</label>
           <input type="password" placeholder="Create password" />

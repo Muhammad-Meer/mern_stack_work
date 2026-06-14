@@ -1,7 +1,35 @@
-import React from 'react';
-import '../styles/styles.css';
+import React, { useState } from "react";
+import "../styles/styles.css";
+import { Link } from "react-router-dom";
+import axios from "axios";
 
 const UserRegister = () => {
+  const [firstName, setFirstName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3200/api/auth/user/register",
+        {
+          firstName,
+          email,
+          password,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      console.log(response.data);
+    } catch (error) {
+      console.log(error.response?.data || error.message);
+    }
+  };
+
   return (
     <div className="auth-container">
       <div className="auth-header">
@@ -10,29 +38,44 @@ const UserRegister = () => {
         <p>Join us and enjoy great food</p>
       </div>
 
-      <form className="auth-form">
+      <form className="auth-form" onSubmit={handleSubmit}>
         <div className="input-group">
           <label>Full Name</label>
-          <input type="text" placeholder="Ahmed Khan" />
-        </div>
-        <div className="input-group">
-          <label>Email Address</label>
-          <input type="email" placeholder="you@example.com" />
-        </div>
-        <div className="input-group">
-          <label>Password</label>
-          <input type="password" placeholder="Create strong password" />
-        </div>
-        <div className="input-group">
-          <label>Phone Number</label>
-          <input type="tel" placeholder="03xx-xxxxxxx" />
+          <input
+            type="text"
+            placeholder="Ahmed Khan"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+          />
         </div>
 
-        <button type="button" className="btn">Register</button>
+        <div className="input-group">
+          <label>Email Address</label>
+          <input
+            type="email"
+            placeholder="you@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+
+        <div className="input-group">
+          <label>Password</label>
+          <input
+            type="password"
+            placeholder="Create strong password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
+
+        <button type="submit" className="btn">
+          Register
+        </button>
       </form>
 
       <div className="switch-link">
-        Already have an account? <a href="/user-login">Login</a>
+        Already have an account? <Link to="/user-login">Login</Link>
       </div>
     </div>
   );
