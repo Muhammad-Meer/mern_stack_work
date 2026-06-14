@@ -1,7 +1,30 @@
 import React from 'react';
 import '../styles/styles.css';
+import axios from 'axios';
+import { useState} from 'react';
 
 const PartnerLogin = () => {
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handelSubmit = async  (e) => {
+    e.preventDefault();
+
+    try {
+      const responce = await axios.post(
+        "http://localhost:3200/api/auth/food-partner/login",
+        {
+          email: email,
+          password: password
+        }
+      )
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+
   return (
     <div className="auth-container">
       <div className="auth-header">
@@ -10,17 +33,19 @@ const PartnerLogin = () => {
         <p>Manage your restaurant easily</p>
       </div>
 
-      <form className="auth-form">
+      <form className="auth-form" onSubmit={handelSubmit}>
         <div className="input-group">
           <label>Restaurant Email</label>
-          <input type="email" placeholder="restaurant@example.com" />
+          <input type="email" placeholder="restaurant@example.com"
+          value={email} onChange={(e) => setEmail(e.target.value)} />
         </div>
         <div className="input-group">
           <label>Password</label>
-          <input type="password" placeholder="••••••••" />
+          <input type="password" placeholder="••••••••"
+          value={password} onChange={(e) => setPassword(e.target.value)} />
         </div>
 
-        <button type="button" className="btn">Login as Partner</button>
+        <button type="submit" className="btn">Login as Partner</button>
       </form>
 
       <div className="switch-link">

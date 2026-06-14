@@ -1,7 +1,33 @@
 import React from 'react';
 import '../styles/styles.css';
+import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import axios from 'axios';
 
 const UserLogin = () => {
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3200/api/auth/user/login",
+        {
+          email: email,
+          password: password,
+        },
+        { withCredentials: true }
+      );
+
+      console.log(response.data);
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
   return (
     <div className="auth-container">
       <div className="auth-header">
@@ -10,17 +36,20 @@ const UserLogin = () => {
         <p>Sign in to order delicious food</p>
       </div>
 
-      <form className="auth-form">
+
+      <form className="auth-form" onSubmit={handleSubmit}>
         <div className="input-group">
           <label>Email Address</label>
-          <input type="email" placeholder="you@example.com" />
+          <input type="email" placeholder="you@example.com"
+           value={email} onChange={(e) => setEmail(e.target.value)} />
         </div>
         <div className="input-group">
           <label>Password</label>
-          <input type="password" placeholder="••••••••" />
+          <input type="password" placeholder="••••••••" 
+           value={password} onChange={(e) => setPassword(e.target.value)} />
         </div>
 
-        <button type="button" className="btn">Login</button>
+        <button type="submit" className="btn">Login</button>
       </form>
 
       <div className="switch-link">
