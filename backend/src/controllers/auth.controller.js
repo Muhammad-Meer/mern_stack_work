@@ -107,7 +107,8 @@ async function userLoginController(req, res) {
       message: "Login successful",
       user: {
         username: user.username,
-        email: user.email
+        email: user.email,
+        businessName: user.businessName
       }
     });
 
@@ -143,12 +144,12 @@ async function userLogoutController(req, res) {
 async function FoodPartnerRegisterController(req, res) {
   console.log(req.body)
   try {
-    const { username, email, password } = req.body;
+    const { username, email, password, businessName } = req.body;
     console.log(req.body)
 
 
 
-    if (!username || !email || !password) {
+    if (!username || !email || !password|| !businessName) {
       return res.status(400).json({
         message: "All fields are required to register a FoodPartner"
       })
@@ -171,6 +172,7 @@ async function FoodPartnerRegisterController(req, res) {
       username: username,
       email: email,
       password: HashedPassword,
+      businessName: businessName
     })
 
     const token = jwt.sign(
@@ -188,6 +190,7 @@ async function FoodPartnerRegisterController(req, res) {
       message: "newFoodPartner registered successfully",
       username: username,
       email: email,
+      businessName: businessName
     })
 
   } catch (error) {
@@ -243,7 +246,8 @@ async function FoodPartnerLoginController(req, res) {
       message: "Login successful",
       user: {
         username: user.username,
-        email: user.email
+        email: user.email,
+        businessName: user.businessName
       }
     });
 
