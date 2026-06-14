@@ -1,0 +1,13 @@
+:root {
+  --primary: #e23744;
+  --primary-dark: #c92d3a;
+  --text: #222;
+  --text-light: #555;
+  --bg: #ffffff;
+  --card-bg: #ffffff;
+  --border: #e5e5e5;
+  --input-bg: #f8f8f8;
+  --success: #22c55e;
+  --radius: 12px;
+  --shadow: 0 4px 20px rgba(226, 55, 68, 0.08);
+}
