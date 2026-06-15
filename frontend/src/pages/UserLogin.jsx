@@ -1,10 +1,12 @@
 import React from 'react';
 import '../styles/styles.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import axios from 'axios';
 
 const UserLogin = () => {
+
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -12,17 +14,26 @@ const UserLogin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if(!email || !password) {
+      alert("All fields are required");
+      return;
+    }
+
     try {
       const response = await axios.post(
         "http://localhost:3200/api/auth/user/login",
         {
-          email: email,
-          password: password,
+          email,
+          password
         },
         { withCredentials: true }
       );
 
       console.log(response.data);
+
+      navigate('/');
+
+      
     } catch (error) {
       console.log(error.message);
     }
@@ -53,7 +64,7 @@ const UserLogin = () => {
       </form>
 
       <div className="switch-link">
-        Don't have an account? <a href="/user-register">Register</a>
+        Don't have an account? <Link to="/user-register">Register</Link>
       </div>
     </div>
   );

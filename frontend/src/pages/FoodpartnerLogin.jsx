@@ -1,9 +1,12 @@
 import React from 'react';
 import '../styles/styles.css';
 import axios from 'axios';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState} from 'react';
 
 const PartnerLogin = () => {
+
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,6 +22,7 @@ const PartnerLogin = () => {
           password: password
         }
       )
+      navigate("/create-food");
     } catch (error) {
       console.log(error.message);
     }
@@ -49,7 +53,7 @@ const PartnerLogin = () => {
       </form>
 
       <div className="switch-link">
-        Don't have a partner account? <a href="/partner-register">Register Restaurant</a>
+        Don't have a partner account? <Link to="/partner-register">Register Restaurant</Link> 
       </div>
     </div>
   );

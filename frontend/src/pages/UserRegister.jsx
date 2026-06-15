@@ -1,23 +1,34 @@
 import React, { useState } from "react";
 import "../styles/styles.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from 'react-router-dom';
 import axios from "axios";
 
 const UserRegister = () => {
+
+  const navigate = useNavigate();
+
+
   const [firstName, setFirstName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!firstName || !email || !password) {
+      alert("All fields are required");
+      return;
+    }
 
     try {
       const response = await axios.post(
         "http://localhost:3200/api/auth/user/register",
         {
-           username: firstName,
-           email: email,
-           password: password,
+          username: firstName,
+          email,
+          password
         },
         {
           withCredentials: true,
@@ -25,6 +36,10 @@ const UserRegister = () => {
       );
 
       console.log(response.data);
+
+      navigate("/user-login");
+
+
     } catch (error) {
       console.log(error.response?.data || error.message);
     }
