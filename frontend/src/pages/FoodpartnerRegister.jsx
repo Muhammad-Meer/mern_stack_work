@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import '../styles/styles.css';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import API from '../config/api';
 
 const PartnerRegister = () => {
-
   const navigate = useNavigate();
-
   const [firstName, setFirstName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,23 +21,13 @@ const PartnerRegister = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3200/api/auth/food-partner/register",
-        {
-          businessName,
-          username: firstName,
-          email,
-          password,
-        },
-        {
-          withCredentials: true,
-        }
+        `${API}/api/auth/food-partner/register`,
+        { businessName, username: firstName, email, password },
+        { withCredentials: true }
       );
 
       console.log(response.data);
-
-      // ✅ success pe redirect
       navigate("/partner-login");
-
     } catch (error) {
       console.log(error.response?.data || error.message);
       alert(error.response?.data?.message || "Registration failed");
@@ -54,7 +43,6 @@ const PartnerRegister = () => {
       </div>
 
       <form className="auth-form" onSubmit={handleSubmit}>
-
         <div className="input-group">
           <label>Restaurant Name</label>
           <input
@@ -95,14 +83,11 @@ const PartnerRegister = () => {
           />
         </div>
 
-        <button type="submit" className="btn">
-          Register Restaurant
-        </button>
+        <button type="submit" className="btn">Register Restaurant</button>
       </form>
 
       <div className="switch-link">
-        Already registered?{" "}
-        <Link to="/partner-login">Login</Link>
+        Already registered? <Link to="/partner-login">Login</Link>
       </div>
     </div>
   );

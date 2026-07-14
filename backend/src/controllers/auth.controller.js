@@ -4,9 +4,16 @@ const FoodPartner = require('../models/food.partner.model');
 const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
 
+const isProduction = process.env.NODE_ENV === 'production';
+
+const cookieOptions = {
+  httpOnly: true,
+  secure: isProduction,
+  sameSite: isProduction ? 'none' : 'lax',
+  maxAge: 7 * 24 * 60 * 60 * 1000
+};
 
 async function userRegisterController(req, res) {
-  console.log(req.body)
   try {
     const { username, email, password } = req.body;
 
@@ -43,11 +50,7 @@ async function userRegisterController(req, res) {
       { expiresIn: "7d" }
     );
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: false,
-      maxAge: 7 * 24 * 60 * 60 * 1000
-    });
+    res.cookie("token", token, cookieOptions);
     return res.status(201).json({
       message: "User registered successfully",
       username: username,
@@ -97,18 +100,13 @@ async function userLoginController(req, res) {
       { expiresIn: "7d" }
     );
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: false,
-      maxAge: 7 * 24 * 60 * 60 * 1000
-    });
+    res.cookie("token", token, cookieOptions);
 
     return res.status(200).json({
       message: "Login successful",
       user: {
         username: user.username,
         email: user.email,
-        businessName: user.businessName
       }
     });
 
@@ -124,7 +122,8 @@ async function userLogoutController(req, res) {
 
     res.clearCookie("token", {
       httpOnly: true,
-      secure: true, // production mein HTTPS ke liye
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
     });
 
     return res.status(200).json({
@@ -142,7 +141,6 @@ async function userLogoutController(req, res) {
 
 
 async function FoodPartnerRegisterController(req, res) {
-  console.log(req.body)
   try {
     const { username, email, password, businessName } = req.body;
     console.log(req.body)
@@ -181,11 +179,7 @@ async function FoodPartnerRegisterController(req, res) {
       { expiresIn: "7d" }
     );
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: false,
-      maxAge: 7 * 24 * 60 * 60 * 1000
-    });
+    res.cookie("token", token, cookieOptions);
     return res.status(201).json({
       message: "newFoodPartner registered successfully",
       username: username,
@@ -236,11 +230,7 @@ async function FoodPartnerLoginController(req, res) {
       { expiresIn: "7d" }
     );
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: false,
-      maxAge: 7 * 24 * 60 * 60 * 1000
-    });
+    res.cookie("token", token, cookieOptions);
 
     return res.status(200).json({
       message: "Login successful",
@@ -263,7 +253,8 @@ async function FoodPartnerLogoutController(req, res) {
 
     res.clearCookie("token", {
       httpOnly: true,
-      secure: true, // production mein HTTPS ke liye
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
     });
 
     return res.status(200).json({

@@ -2,19 +2,10 @@ require('dotenv').config();
 const app = require('./src/app');
 const connectDB = require('./src/config/database');
 
-
-
-
-
-
 connectDB();
 
 const PORT = process.env.PORT || 3200;
 
-
-
-
-
-app.listen(PORT, () => {
-  console.log(`http://localhost:${PORT}`);
-})
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on port ${PORT} in ${process.env.NODE_ENV || 'development'} mode`);
+});

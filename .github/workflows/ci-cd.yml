@@ -1,0 +1,219 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+env:
+  AWS_REGION: us-east-1
+  PROJECT_NAME: zometo
+
+jobs:
+  # ============================================
+  # Job 1: Lint & Test
+  # ============================================
+  lint-and-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Backend checks
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install backend dependencies
+        run: npm ci
+        working-directory: backend
+
+      - name: Backend lint
+        run: npm run lint --if-present
+        working-directory: backend
+
+      # Frontend checks
+      - name: Setup Node.js for frontend
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        run: npm ci
+        working-directory: frontend
+
+      - name: Frontend lint
+        run: npm run lint
+        working-directory: frontend
+
+      - name: Frontend build test
+        run: npm run build
+        working-directory: frontend
+        env:
+          VITE_API_BASE_URL: http://localhost:3200
+
+  # ============================================
+  # Job 2: Deploy Infrastructure (Terraform)
+  # ============================================
+  deploy-infrastructure:
+    needs: lint-and-test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.7"
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        run: |
+          terraform plan \
+            -var="mongo_uri=${{ secrets.MONGO_URI }}" \
+            -var="jwt_secret=${{ secrets.JWT_SECRET }}" \
+            -var="imagekit_endpoint=${{ secrets.IMAGEKIT_ENDPOINT }}" \
+            -var="imagekit_public_key=${{ secrets.IMAGEKIT_PUBLIC_KEY }}" \
+            -var="imagekit_private_key=${{ secrets.IMAGEKIT_PRIVATE_KEY }}" \
+            -var="allowed_origins=${{ secrets.ALLOWED_ORIGINS }}" \
+            -out=tfplan
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve tfplan
+
+      - name: Get Outputs
+        id: tf-outputs
+        run: |
+          echo "frontend_url=$(terraform output -raw frontend_url)" >> $GITHUB_OUTPUT
+          echo "backend_url=$(terraform output -raw backend_url)" >> $GITHUB_OUTPUT
+          echo "cloudfront_distribution_id=$(terraform output -raw cloudfront_distribution_id)" >> $GITHUB_OUTPUT
+          echo "s3_bucket_id=$(terraform output -raw s3_bucket_id)" >> $GITHUB_OUTPUT
+
+    outputs:
+      frontend_url: ${{ steps.tf-outputs.outputs.frontend_url }}
+      backend_url: ${{ steps.tf-outputs.outputs.backend_url }}
+      cloudfront_distribution_id: ${{ steps.tf-outputs.outputs.cloudfront_distribution_id }}
+      s3_bucket_id: ${{ steps.tf-outputs.outputs.s3_bucket_id }}
+
+  # ============================================
+  # Job 3: Deploy Frontend to S3/CloudFront
+  # ============================================
+  deploy-frontend:
+    needs: deploy-infrastructure
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        run: npm ci
+        working-directory: frontend
+
+      - name: Build frontend
+        working-directory: frontend
+        env:
+          VITE_API_BASE_URL: ${{ needs.deploy-infrastructure.outputs.backend_url }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Deploy to S3
+        run: |
+          aws s3 sync frontend/dist/ s3://${{ needs.deploy-infrastructure.outputs.s3_bucket_id }}/ --delete
+
+      - name: Invalidate CloudFront cache
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ needs.deploy-infrastructure.outputs.cloudfront_distribution_id}} \
+            --paths "/*"
+
+  # ============================================
+  # Job 4: Deploy Backend to EC2
+  # ============================================
+  deploy-backend:
+    needs: deploy-infrastructure
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ec2-user
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /opt/app
+
+            # Backup current version
+            if [ -f server.js ]; then
+              cp -r . ../app-backup-$(date +%Y%m%d%H%M%S)
+            fi
+
+            # Pull latest code (if using git on server)
+            # git pull origin main
+
+            # Restart with PM2
+            pm2 restart zometo-backend || pm2 start server.js --name zometo-backend
+
+            # Health check
+            sleep 5
+            curl -sf http://localhost:3200/health || {
+              echo "Health check failed, rolling back..."
+              cd ../app-backup-$(date +%Y%m%d%H%M%S)
+              pm2 start server.js --name zometo-backend
+              exit 1
+            }
+
+            echo "Backend deployed successfully!"

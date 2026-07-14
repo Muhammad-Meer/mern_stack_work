@@ -1,33 +1,31 @@
-import React from 'react';
 import '../styles/styles.css';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState} from 'react';
+import API from '../config/api';
 
 const PartnerLogin = () => {
-
   const navigate = useNavigate();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handelSubmit = async  (e) => {
+  const handelSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const responce = await axios.post(
-        "http://localhost:3200/api/auth/food-partner/login",
+      await axios.post(
+        `${API}/api/auth/food-partner/login`,
         {
           email: email,
           password: password
-        }
+        },
+        { withCredentials: true }
       )
       navigate("/create-food");
     } catch (error) {
       console.log(error.message);
     }
   }
-
 
   return (
     <div className="auth-container">
@@ -53,7 +51,7 @@ const PartnerLogin = () => {
       </form>
 
       <div className="switch-link">
-        Don't have a partner account? <Link to="/partner-register">Register Restaurant</Link> 
+        Don't have a partner account? <Link to="/food-partner/register">Register Restaurant</Link> 
       </div>
     </div>
   );

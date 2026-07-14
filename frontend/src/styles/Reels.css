@@ -102,6 +102,35 @@
   }
 }
 
+.reel-actions {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 12px;
+}
+
+.action-btn {
+  background: none;
+  border: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.action-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.action-btn span {
+  font-size: 14px;
+  font-weight: 600;
+}
+
 .reels-container::-webkit-scrollbar {
   display: none;
 }

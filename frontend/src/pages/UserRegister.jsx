@@ -1,18 +1,14 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import "../styles/styles.css";
 import { Link, useNavigate } from 'react-router-dom';
 import axios from "axios";
+import API from '../config/api';
 
 const UserRegister = () => {
-
   const navigate = useNavigate();
-
-
   const [firstName, setFirstName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,22 +20,13 @@ const UserRegister = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3200/api/auth/user/register",
-        {
-          username: firstName,
-          email,
-          password
-        },
-        {
-          withCredentials: true,
-        }
+        `${API}/api/auth/user/register`,
+        { username: firstName, email, password },
+        { withCredentials: true }
       );
 
       console.log(response.data);
-
       navigate("/user-login");
-
-
     } catch (error) {
       console.log(error.response?.data || error.message);
     }
@@ -84,9 +71,7 @@ const UserRegister = () => {
           />
         </div>
 
-        <button type="submit" className="btn">
-          Register
-        </button>
+        <button type="submit" className="btn">Register</button>
       </form>
 
       <div className="switch-link">

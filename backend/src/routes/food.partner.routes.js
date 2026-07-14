@@ -1,12 +1,7 @@
-const express = require('express')
-const createFoodrouter = express.Router()
-const { authMiddleware , userAuthMiddleware  } = require('../middleware/auth.middleware')
-const { createFood , getFooditems } = require('../controllers/Food.controller')
-const upload = require('../middleware/upload.middleware')
+const express = require('express');
+const foodPartnerRouter = express.Router();
+const { getFoodPartnerProfile } = require('../controllers/food.partner.controller');
 
+foodPartnerRouter.get('/:id', getFoodPartnerProfile);
 
-// PROTECTED CREATE FOOD API
-createFoodrouter.post('/', authMiddleware, upload.single("video"), createFood)
-createFoodrouter.get('/', userAuthMiddleware, getFooditems)
-
-module.exports = createFoodrouter
+module.exports = foodPartnerRouter;

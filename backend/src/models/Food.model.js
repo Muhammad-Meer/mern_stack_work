@@ -23,6 +23,14 @@ const FoodSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "FoodPartner"
   },
+  likeCount: {
+    type: Number,
+    default: 0,
+  },
+  savesCount: {
+    type: Number,
+    default: 0,
+  },
 })
 
 module.exports = mongoose.model("Food", FoodSchema);

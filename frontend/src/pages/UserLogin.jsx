@@ -1,13 +1,11 @@
-import React from 'react';
 import '../styles/styles.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import axios from 'axios';
+import API from '../config/api';
 
 const UserLogin = () => {
-
   const navigate = useNavigate();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -21,19 +19,13 @@ const UserLogin = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3200/api/auth/user/login",
-        {
-          email,
-          password
-        },
+        `${API}/api/auth/user/login`,
+        { email, password },
         { withCredentials: true }
       );
 
       console.log(response.data);
-
       navigate('/');
-
-      
     } catch (error) {
       console.log(error.message);
     }
@@ -46,7 +38,6 @@ const UserLogin = () => {
         <h1>Welcome Back</h1>
         <p>Sign in to order delicious food</p>
       </div>
-
 
       <form className="auth-form" onSubmit={handleSubmit}>
         <div className="input-group">
@@ -64,7 +55,7 @@ const UserLogin = () => {
       </form>
 
       <div className="switch-link">
-        Don't have an account? <Link to="/user-register">Register</Link>
+        Don't have an account? <Link to="/user/register">Register</Link>
       </div>
     </div>
   );
