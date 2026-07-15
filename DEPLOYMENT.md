@@ -93,10 +93,16 @@ allowed_origins = "https://d1234567890.cloudfront.net,http://localhost:5173"
 
 ### Or set as GitHub Secrets for CI/CD:
 
+Deploy jobs use the GitHub **Environment** named `production`. Secrets must be set
+either as **repository secrets** or as **environment secrets** on `production`.
+
+**Path:** Repo → **Settings** → **Secrets and variables** → **Actions**  
+(or **Settings** → **Environments** → **production** → Environment secrets)
+
 | Secret Name          | Description                    |
 |---------------------|--------------------------------|
-| AWS_ACCESS_KEY_ID   | AWS access key                 |
-| AWS_SECRET_ACCESS_KEY | AWS secret key               |
+| AWS_ACCESS_KEY_ID   | AWS access key (**required** for deploy) |
+| AWS_SECRET_ACCESS_KEY | AWS secret key (**required** for deploy) |
 | MONGO_URI           | MongoDB Atlas connection string |
 | JWT_SECRET          | JWT signing secret              |
 | IMAGEKIT_ENDPOINT   | ImageKit endpoint URL           |
@@ -105,6 +111,12 @@ allowed_origins = "https://d1234567890.cloudfront.net,http://localhost:5173"
 | ALLOWED_ORIGINS     | Comma-separated CORS origins    |
 | EC2_HOST            | EC2 public IP or DNS            |
 | EC2_SSH_KEY         | SSH private key for EC2         |
+
+If `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` are missing, the deploy job fails with:
+`Credentials could not be loaded, please check your action inputs`.
+
+Create an IAM user (or access keys) with permissions for Terraform, S3, CloudFront,
+EC2, SSM, etc., then paste the keys into the secrets above. Never commit keys to git.
 
 ---
 
