@@ -6,15 +6,17 @@ variable "aws_region" {
 }
 
 variable "aws_access_key" {
-  description = "AWS access key"
+  description = "AWS access key (optional if using AWS_ACCESS_KEY_ID env / profile)"
   type        = string
   sensitive   = true
+  default     = ""
 }
 
 variable "aws_secret_key" {
-  description = "AWS secret key"
+  description = "AWS secret key (optional if using AWS_SECRET_ACCESS_KEY env / profile)"
   type        = string
   sensitive   = true
+  default     = ""
 }
 
 variable "project_name" {
