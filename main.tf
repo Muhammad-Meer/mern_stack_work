@@ -133,6 +133,11 @@ output "frontend_url" {
   value       = "https://${module.s3_cloudfront.cloudfront_domain_name}"
 }
 
+output "s3_website_url" {
+  description = "S3 static website URL (fallback if CloudFront not created)"
+  value       = "http://${module.s3_cloudfront.s3_website_endpoint}"
+}
+
 output "backend_url" {
   description = "Backend API URL"
   value       = "http://${module.alb.alb_dns_name}"
