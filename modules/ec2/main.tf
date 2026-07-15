@@ -184,7 +184,7 @@ resource "aws_instance" "backend" {
 
     echo "=== user_data completed ==="
   USERDATA
- )
+  )
   root_block_device {
     volume_type = "gp3"
     volume_size = 30
@@ -192,7 +192,7 @@ resource "aws_instance" "backend" {
   }
 
   metadata_options {
-    http_tokens = "required"  # IMDSv2 for security
+    http_tokens = "required" # IMDSv2 for security
   }
 
   tags = {

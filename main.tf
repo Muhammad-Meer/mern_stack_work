@@ -46,17 +46,17 @@ module "alb" {
 module "ec2" {
   source = "./modules/ec2"
 
-  project_name      = var.project_name
-  environment       = var.environment
-  public_subnet_ids = module.vpc.public_subnet_ids
-  ec2_sg_id         = module.security_groups.ec2_sg_id
-  instance_type     = var.instance_type
-  key_name          = var.key_name
-  backend_port      = var.backend_port
-  target_group_arn  = module.alb.target_group_arn
-  mongo_uri         = var.mongo_uri
-  jwt_secret        = var.jwt_secret
-  imagekit_endpoint = var.imagekit_endpoint
+  project_name         = var.project_name
+  environment          = var.environment
+  public_subnet_ids    = module.vpc.public_subnet_ids
+  ec2_sg_id            = module.security_groups.ec2_sg_id
+  instance_type        = var.instance_type
+  key_name             = var.key_name
+  backend_port         = var.backend_port
+  target_group_arn     = module.alb.target_group_arn
+  mongo_uri            = var.mongo_uri
+  jwt_secret           = var.jwt_secret
+  imagekit_endpoint    = var.imagekit_endpoint
   imagekit_public_key  = var.imagekit_public_key
   imagekit_private_key = var.imagekit_private_key
   allowed_origins      = var.allowed_origins
