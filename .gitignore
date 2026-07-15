@@ -1,4 +1,7 @@
+# Terraform
 terraform.tfvars
+secrets.auto.tfvars
+secrets.auto.tfvars.txt
 *.tfstate
 *.tfstate.backup
 .terraform/
@@ -8,3 +11,19 @@ override.tf
 override.tf.json
 *_override.tf
 *_override.tf.json
+
+# SSH Keys
+*.pem
+
+# Backend secrets
+backend/.env
+backend/.env.*
+!backend/.env.example
+
+# Node
+node_modules/
+dist/
+
+# OS
+.DS_Store
+Thumbs.db

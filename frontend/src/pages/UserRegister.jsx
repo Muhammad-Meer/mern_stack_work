@@ -37,7 +37,7 @@ const UserRegister = () => {
       <div className="auth-header">
         <span className="role-badge">Customer</span>
         <h1>Create Account</h1>
-        <p>Join us and enjoy great food</p>
+        <p>Join us and enjoy great food!</p>
       </div>
 
       <form className="auth-form" onSubmit={handleSubmit}>

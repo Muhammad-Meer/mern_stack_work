@@ -19,10 +19,11 @@ module "vpc" {
 module "security_groups" {
   source = "./modules/security_groups"
 
-  project_name = var.project_name
-  environment  = var.environment
-  vpc_id       = module.vpc.vpc_id
-  vpc_cidr     = var.vpc_cidr
+  project_name    = var.project_name
+  environment     = var.environment
+  vpc_id          = module.vpc.vpc_id
+  vpc_cidr        = var.vpc_cidr
+  ssh_cidr_blocks = var.ssh_cidr_blocks
 }
 
 # -----------------------------------------------------------------------------
@@ -101,6 +102,11 @@ output "alb_dns_name" {
 output "ec2_public_ip" {
   description = "EC2 instance public IP"
   value       = module.ec2.instance_public_ip
+}
+
+output "ec2_instance_id" {
+  description = "EC2 instance ID"
+  value       = module.ec2.instance_id
 }
 
 output "s3_bucket_id" {

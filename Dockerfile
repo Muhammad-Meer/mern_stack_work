@@ -17,6 +17,7 @@ COPY backend/package*.json ./
 RUN npm ci --omit=dev
 
 COPY backend/ .
+COPY --from=builder /app/frontend/dist ./public/dist
 
 RUN mkdir -p uploads
 

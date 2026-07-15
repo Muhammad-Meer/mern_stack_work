@@ -5,6 +5,18 @@ variable "aws_region" {
   default     = "us-east-1"
 }
 
+variable "aws_access_key" {
+  description = "AWS access key"
+  type        = string
+  sensitive   = true
+}
+
+variable "aws_secret_key" {
+  description = "AWS secret key"
+  type        = string
+  sensitive   = true
+}
+
 variable "project_name" {
   description = "Project name used for tagging and resource naming"
   type        = string
@@ -50,9 +62,9 @@ variable "enable_nat_gateway" {
 
 # EC2
 variable "instance_type" {
-  description = "EC2 instance type (t2.micro is Free Tier)"
+  description = "EC2 instance type (t3.micro is Free Tier)"
   type        = string
-  default     = "t2.micro"
+  default     = "t3.micro"
 }
 
 variable "key_name" {
@@ -124,4 +136,11 @@ variable "allowed_origins" {
   description = "Comma-separated list of allowed CORS origins for backend"
   type        = string
   default     = ""
+}
+
+# Security
+variable "ssh_cidr_blocks" {
+  description = "CIDR blocks allowed for SSH access to EC2"
+  type        = list(string)
+  default     = ["0.0.0.0/0"]
 }

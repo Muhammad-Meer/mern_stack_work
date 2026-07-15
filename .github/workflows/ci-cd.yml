@@ -102,6 +102,8 @@ jobs:
             -var="imagekit_public_key=${{ secrets.IMAGEKIT_PUBLIC_KEY }}" \
             -var="imagekit_private_key=${{ secrets.IMAGEKIT_PRIVATE_KEY }}" \
             -var="allowed_origins=${{ secrets.ALLOWED_ORIGINS }}" \
+            -var="aws_access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" \
+            -var="aws_secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}" \
             -out=tfplan
 
       - name: Terraform Apply
@@ -112,17 +114,21 @@ jobs:
         run: |
           echo "frontend_url=$(terraform output -raw frontend_url)" >> $GITHUB_OUTPUT
           echo "backend_url=$(terraform output -raw backend_url)" >> $GITHUB_OUTPUT
-          echo "cloudfront_distribution_id=$(terraform output -raw cloudfront_distribution_id)" >> $GITHUB_OUTPUT
+          echo "cloudfront_distribution_id=$(terraform output -raw cloudfront_distribution_id)" >> $GITHUB_OUTPUT || true
           echo "s3_bucket_id=$(terraform output -raw s3_bucket_id)" >> $GITHUB_OUTPUT
+          echo "ec2_instance_id=$(terraform output -raw ec2_instance_id)" >> $GITHUB_OUTPUT
+          echo "s3_deploy_bucket=${{ env.PROJECT_NAME }}-${{ env.ENVIRONMENT }}-deploy" >> $GITHUB_OUTPUT
 
     outputs:
       frontend_url: ${{ steps.tf-outputs.outputs.frontend_url }}
       backend_url: ${{ steps.tf-outputs.outputs.backend_url }}
       cloudfront_distribution_id: ${{ steps.tf-outputs.outputs.cloudfront_distribution_id }}
       s3_bucket_id: ${{ steps.tf-outputs.outputs.s3_bucket_id }}
+      ec2_instance_id: ${{ steps.tf-outputs.outputs.ec2_instance_id }}
+      s3_deploy_bucket: ${{ steps.tf-outputs.outputs.s3_deploy_bucket }}
 
   # ============================================
-  # Job 3: Deploy Frontend to S3/CloudFront
+  # Job 3: Deploy Frontend to S3
   # ============================================
   deploy-frontend:
     needs: deploy-infrastructure
@@ -162,9 +168,10 @@ jobs:
           aws s3 sync frontend/dist/ s3://${{ needs.deploy-infrastructure.outputs.s3_bucket_id }}/ --delete
 
       - name: Invalidate CloudFront cache
+        if: needs.deploy-infrastructure.outputs.cloudfront_distribution_id != ''
         run: |
           aws cloudfront create-invalidation \
-            --distribution-id ${{ needs.deploy-infrastructure.outputs.cloudfront_distribution_id}} \
+            --distribution-id ${{ needs.deploy-infrastructure.outputs.cloudfront_distribution_id }} \
             --paths "/*"
 
   # ============================================
@@ -187,33 +194,49 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Deploy to EC2 via SSH
-        uses: appleboy/ssh-action@v1
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ec2-user
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            cd /opt/app
+      - name: Upload backend to S3
+        run: |
+          cd backend
+          zip -r /tmp/backend.zip . -x "node_modules/*"
+          aws s3 cp /tmp/backend.zip s3://${{ needs.deploy-infrastructure.outputs.s3_deploy_bucket }}/backend.zip
 
-            # Backup current version
-            if [ -f server.js ]; then
-              cp -r . ../app-backup-$(date +%Y%m%d%H%M%S)
-            fi
+      - name: Deploy to EC2 via SSM
+        run: |
+          COMMAND_ID=$(aws ssm send-command \
+            --instance-ids ${{ needs.deploy-infrastructure.outputs.ec2_instance_id }} \
+            --document-name "AWS-RunShellScript" \
+            --parameters 'commands=[
+              "cd /opt/app && aws s3 cp s3://${{ needs.deploy-infrastructure.outputs.s3_deploy_bucket }}/backend.zip /tmp/backend.zip",
+              "cd /opt/app && unzip -o /tmp/backend.zip",
+              "cd /opt/app && rm -f /tmp/backend.zip",
+              "cd /opt/app && npm ci --omit=dev",
+              "cd /opt/app && pm2 restart zometo-backend || pm2 start server.js --name zometo-backend",
+              "cd /opt/app && pm2 save",
+              "sleep 3",
+              "curl -sf http://localhost:3200/health || exit 1"
+            ]' \
+            --output json | jq -r '.Command.CommandId')
 
-            # Pull latest code (if using git on server)
-            # git pull origin main
+          echo "SSM Command: $COMMAND_ID"
+          sleep 30
 
-            # Restart with PM2
-            pm2 restart zometo-backend || pm2 start server.js --name zometo-backend
+          STATUS=$(aws ssm get-command-invocation \
+            --command-id $COMMAND_ID \
+            --instance-id ${{ needs.deploy-infrastructure.outputs.ec2_instance_id }} \
+            --query 'Status' --output text)
 
-            # Health check
-            sleep 5
-            curl -sf http://localhost:3200/health || {
-              echo "Health check failed, rolling back..."
-              cd ../app-backup-$(date +%Y%m%d%H%M%S)
-              pm2 start server.js --name zometo-backend
-              exit 1
-            }
+          echo "Status: $STATUS"
+          if [ "$STATUS" != "Success" ]; then
+            echo "Deployment failed!"
+            aws ssm get-command-invocation \
+              --command-id $COMMAND_ID \
+              --instance-id ${{ needs.deploy-infrastructure.outputs.ec2_instance_id }} \
+              --query 'StandardErrorContent' --output text
+            exit 1
+          fi
 
-            echo "Backend deployed successfully!"
+      - name: Verify health check
+        run: |
+          sleep 5
+          curl -sf ${{ needs.deploy-infrastructure.outputs.backend_url }}/health
+          echo "Backend deployment verified!"

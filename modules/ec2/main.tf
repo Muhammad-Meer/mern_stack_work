@@ -4,7 +4,7 @@ data "aws_ami" "amazon_linux" {
 
   filter {
     name   = "name"
-    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+    values = ["al2023-ami-*-x86_64"]
   }
 
   filter {
@@ -12,6 +12,8 @@ data "aws_ami" "amazon_linux" {
     values = ["hvm"]
   }
 }
+
+data "aws_caller_identity" "current" {}
 
 resource "aws_iam_role" "ec2_role" {
   name = "${var.project_name}-${var.environment}-ec2-role"
@@ -63,9 +65,21 @@ resource "aws_iam_role_policy" "ec2_ssm" {
           "logs:PutLogEvents"
         ]
         Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:GetObject"
+        ]
+        Resource = "arn:aws:s3:::${var.project_name}-${var.environment}-deploy/*"
       }
     ]
   })
+}
+
+resource "aws_iam_role_policy_attachment" "ssm_managed" {
+  role       = aws_iam_role.ec2_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
 resource "aws_instance" "backend" {
@@ -79,19 +93,22 @@ resource "aws_instance" "backend" {
   user_data = base64encode(<<-USERDATA
     #!/bin/bash
     set -e
+    exec > >(tee /var/log/user-data.log) 2>&1
+
+    echo "=== Starting user_data ==="
 
     # Update system
-    yum update -y
+    dnf update -y || true
 
     # Install Node.js 20
     curl -fsSL https://rpm.nodesource.com/setup_20.x | bash -
-    yum install -y nodejs
+    dnf install -y nodejs
 
     # Install PM2
     npm install -g pm2
 
     # Install Nginx
-    yum install -y nginx
+    dnf install -y nginx
 
     # Configure Nginx
     cat > /etc/nginx/conf.d/backend.conf << 'NGINX'
@@ -99,8 +116,10 @@ resource "aws_instance" "backend" {
         listen 80;
         server_name _;
 
+        client_max_body_size 50M;
+
         location / {
-            proxy_pass http://127.0.0.1:${var.backend_port};
+            proxy_pass http://127.0.0.1:3200;
             proxy_http_version 1.1;
             proxy_set_header Upgrade $http_upgrade;
             proxy_set_header Connection 'upgrade';
@@ -109,10 +128,14 @@ resource "aws_instance" "backend" {
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
             proxy_cache_bypass $http_upgrade;
+            proxy_connect_timeout 60s;
+            proxy_send_timeout 60s;
+            proxy_read_timeout 60s;
         }
 
         location /health {
-            proxy_pass http://127.0.0.1:${var.backend_port}/health;
+            proxy_pass http://127.0.0.1:3200/health;
+            access_log off;
         }
     }
     NGINX
@@ -126,7 +149,7 @@ resource "aws_instance" "backend" {
 
     # Write environment file
     cat > .env << 'ENV'
-    PORT=${var.backend_port}
+    PORT=3200
     NODE_ENV=production
     MONGO_URI=${var.mongo_uri}
     JWT_SECRET_KEY=${var.jwt_secret}
@@ -136,17 +159,35 @@ resource "aws_instance" "backend" {
     ALLOWED_ORIGINS=${var.allowed_origins}
     ENV
 
+    # Download and deploy backend code from S3
+    echo "Downloading backend code from S3..."
+    aws s3 cp s3://${var.project_name}-${var.environment}-deploy/backend.zip /tmp/backend.zip
+    unzip -o /tmp/backend.zip -d /opt/app
+    rm -f /tmp/backend.zip
+
+    # Install dependencies
+    cd /opt/app
+    npm ci --omit=dev
+
+    # Start application with PM2
+    pm2 delete zometo-backend 2>/dev/null || true
+    pm2 start server.js --name zometo-backend --env production
+    pm2 save
+
+    # Setup PM2 to start on boot
+    pm2 startup systemd -u ec2-user --hp /home/ec2-user || true
+
     # Install pm2-logrotate for log management
     pm2 install pm2-logrotate
     pm2 set pm2-logrotate:max_size 10M
     pm2 set pm2-logrotate:retain 7
 
-    echo "User data script completed" > /var/log/user-data.log
+    echo "=== user_data completed ==="
   USERDATA
-
+ )
   root_block_device {
     volume_type = "gp3"
-    volume_size = 8
+    volume_size = 30
     encrypted   = true
   }
 
