@@ -151,10 +151,17 @@ jobs:
         run: npm ci
         working-directory: frontend
 
+      # - name: Build frontend
+      #   working-directory: frontend
+      #   env:
+      #     VITE_API_BASE_URL: ${{ needs.deploy-infrastructure.outputs.backend_url }}
+
+
       - name: Build frontend
-        working-directory: frontend
-        env:
-          VITE_API_BASE_URL: ${{ needs.deploy-infrastructure.outputs.backend_url }}
+  working-directory: frontend
+  env:
+    VITE_API_BASE_URL: ${{ needs.deploy-infrastructure.outputs.backend_url }}
+  run: npm run build
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
