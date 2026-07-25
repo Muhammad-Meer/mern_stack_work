@@ -1,6 +1,5 @@
-/* Reels.css */
 .reels-container {
-  height: 100vh;
+  height: 100%;
   overflow-y: scroll;
   scroll-snap-type: y mandatory;
   scroll-behavior: smooth;
@@ -11,7 +10,7 @@
 
 .reel-item {
   height: 100vh;
-  width: 100vw;
+  width: 100%;
   position: relative;
   scroll-snap-align: start;
   scroll-snap-stop: always;
@@ -32,7 +31,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 20px 16px 30px;
+  padding: 20px 16px 100px;
   background: linear-gradient(transparent, rgba(0, 0, 0, 0.85));
   color: white;
   z-index: 10;
@@ -60,46 +59,12 @@
   font-size: 15px;
   width: 100%;
   cursor: pointer;
+  transition: all 0.2s;
 }
 
-/* Navigation Buttons */
-.nav-btn {
-  position: absolute;
-  right: 20px;
-  background: rgba(0, 0, 0, 0.6);
-  color: white;
-  border: none;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  cursor: pointer;
-  z-index: 20;
-  transition: all 0.3s;
-  backdrop-filter: blur(8px);
-}
-
-.nav-btn:hover {
-  background: rgba(0, 0, 0, 0.8);
-  transform: scale(1.1);
-}
-
-.nav-up {
-  top: 30%;
-}
-
-.nav-down {
-  bottom: 30%;
-}
-
-/* Hide buttons on mobile */
-@media (max-width: 768px) {
-  .nav-btn {
-    display: none;
-  }
+.visit-store-btn:hover {
+  background: #f0f0f0;
+  transform: scale(1.02);
 }
 
 .reel-actions {
@@ -133,4 +98,72 @@
 
 .reels-container::-webkit-scrollbar {
   display: none;
+}
+
+.nav-btn {
+  position: absolute;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 20;
+  transition: all 0.3s;
+  backdrop-filter: blur(8px);
+}
+
+.nav-btn:hover {
+  background: rgba(0, 0, 0, 0.8);
+  transform: scale(1.1);
+}
+
+.nav-up {
+  top: 30%;
+}
+
+.nav-down {
+  bottom: 30%;
+}
+
+@media (min-width: 768px) {
+  .reels-container {
+    max-width: 420px;
+    margin: 0 auto;
+    border-left: 1px solid #222;
+    border-right: 1px solid #222;
+  }
+
+  .reel-item {
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  .reel-overlay {
+    max-width: 420px;
+    margin: 0 auto;
+    left: 50%;
+    transform: translateX(-50%);
+    padding-bottom: 110px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .reels-container {
+    max-width: 440px;
+  }
+
+  .reel-item {
+    max-width: 440px;
+  }
+
+  .reel-overlay {
+    max-width: 440px;
+  }
 }

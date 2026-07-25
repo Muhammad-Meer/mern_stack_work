@@ -33,7 +33,19 @@ const ReelFeed = ({ items, onLike, onSave, emptyMessage }) => {
   if (!items || items.length === 0) {
     return (
       <div className="reels-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ color: '#fff', fontSize: '18px' }}>{emptyMessage || 'No items available.'}</p>
+        <div style={{ textAlign: 'center', padding: '40px 20px' }}>
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="1.5" style={{ marginBottom: '16px' }}>
+            <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18" />
+            <line x1="7" y1="2" x2="7" y2="22" />
+            <line x1="17" y1="2" x2="17" y2="22" />
+            <line x1="2" y1="12" x2="22" y2="12" />
+            <line x1="2" y1="7" x2="7" y2="7" />
+            <line x1="2" y1="17" x2="7" y2="17" />
+            <line x1="17" y1="7" x2="22" y2="7" />
+            <line x1="17" y1="17" x2="22" y2="17" />
+          </svg>
+          <p style={{ color: '#aaa', fontSize: '16px' }}>{emptyMessage || 'No items available.'}</p>
+        </div>
       </div>
     );
   }

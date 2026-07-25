@@ -1,8 +1,10 @@
 :root {
   --primary: #e23744;
   --primary-dark: #c92d3a;
+  --primary-light: #ff6b7a;
   --text: #222;
   --text-light: #555;
+  --text-muted: #888;
   --bg: #ffffff;
   --card-bg: #ffffff;
   --border: #e5e5e5;
@@ -10,4 +12,5 @@
   --success: #22c55e;
   --radius: 12px;
   --shadow: 0 4px 20px rgba(226, 55, 68, 0.08);
+  --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.12);
 }

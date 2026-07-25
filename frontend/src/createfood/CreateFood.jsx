@@ -54,7 +54,11 @@ const CreateFood = () => {
 
       navigate('/');
     } catch (error) {
-      alert(error.response?.data?.error || 'Upload failed');
+      if (error.response?.status === 401) {
+        navigate('/partner-login');
+      } else {
+        alert(error.response?.data?.error || 'Upload failed');
+      }
     } finally {
       setUploading(false);
     }

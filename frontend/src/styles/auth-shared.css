@@ -20,12 +20,14 @@
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s;
+  color: #222;
 }
 
 .choose-btn:hover {
   border-color: #e23744;
   background: #fff5f5;
   transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(226, 55, 68, 0.12);
 }
 
 .choose-icon {
@@ -45,4 +47,16 @@
 
 .switch-link a {
   cursor: pointer;
+}
+
+@media (min-width: 768px) {
+  .choose-options {
+    flex-direction: row;
+    gap: 20px;
+  }
+
+  .choose-btn {
+    flex: 1;
+    padding: 32px 24px;
+  }
 }

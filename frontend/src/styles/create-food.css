@@ -86,6 +86,7 @@
   background: #f8f8f8;
   transition: all 0.3s;
   font-family: inherit;
+  color: #222;
 }
 
 .create-food-container .input-group input:focus,
@@ -93,6 +94,7 @@
   outline: none;
   border-color: #e23744;
   box-shadow: 0 0 0 3px rgba(226, 55, 68, 0.1);
+  background: #fff;
 }
 
 .create-food-container .input-group textarea {
@@ -116,10 +118,21 @@
 .submit-btn:hover {
   background: #c92d3a;
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(226, 55, 68, 0.3);
 }
 
 .submit-btn:disabled {
   opacity: 0.7;
   cursor: not-allowed;
   transform: none;
+}
+
+@media (min-width: 768px) {
+  .create-food-container {
+    padding: 48px 40px;
+  }
+
+  .create-food-container h1 {
+    font-size: 32px;
+  }
 }

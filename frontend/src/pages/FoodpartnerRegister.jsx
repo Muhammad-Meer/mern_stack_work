@@ -10,6 +10,7 @@ const PartnerRegister = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [businessName, setBusinessName] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,75 +20,79 @@ const PartnerRegister = () => {
       return;
     }
 
+    setLoading(true);
     try {
-      const response = await axios.post(
+      await axios.post(
         `${API}/api/auth/food-partner/register`,
         { businessName, username: firstName, email, password },
         { withCredentials: true }
       );
-
-      console.log(response.data);
       navigate("/partner-login");
     } catch (error) {
-      console.log(error.response?.data || error.message);
       alert(error.response?.data?.message || "Registration failed");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="auth-container">
-      <div className="auth-header">
-        <span className="role-badge">Food Partner</span>
-        <h1>Register Restaurant</h1>
-        <p>Grow your business with us</p>
-      </div>
-
-      <form className="auth-form" onSubmit={handleSubmit}>
-        <div className="input-group">
-          <label>Restaurant Name</label>
-          <input
-            type="text"
-            placeholder="Al-Habib Biryani"
-            value={businessName}
-            onChange={(e) => setBusinessName(e.target.value)}
-          />
+    <div className="auth-page">
+      <div className="auth-container">
+        <div className="auth-header">
+          <span className="role-badge">Food Partner</span>
+          <h1>Register Restaurant</h1>
+          <p>Grow your business with us</p>
         </div>
 
-        <div className="input-group">
-          <label>Owner Name</label>
-          <input
-            type="text"
-            placeholder="Full Name"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-          />
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <div className="input-group">
+            <label>Restaurant Name</label>
+            <input
+              type="text"
+              placeholder="Al-Habib Biryani"
+              value={businessName}
+              onChange={(e) => setBusinessName(e.target.value)}
+            />
+          </div>
+
+          <div className="input-group">
+            <label>Owner Name</label>
+            <input
+              type="text"
+              placeholder="Full Name"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+            />
+          </div>
+
+          <div className="input-group">
+            <label>Business Email</label>
+            <input
+              type="email"
+              placeholder="owner@restaurant.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+
+          <div className="input-group">
+            <label>Password</label>
+            <input
+              type="password"
+              placeholder="Create password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+
+          <button type="submit" className="btn" disabled={loading}>
+            {loading ? "Registering..." : "Register Restaurant"}
+          </button>
+        </form>
+
+        <div className="switch-link">
+          Already registered? <Link to="/partner-login">Login</Link>
         </div>
-
-        <div className="input-group">
-          <label>Business Email</label>
-          <input
-            type="email"
-            placeholder="owner@restaurant.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-
-        <div className="input-group">
-          <label>Password</label>
-          <input
-            type="password"
-            placeholder="Create password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-
-        <button type="submit" className="btn">Register Restaurant</button>
-      </form>
-
-      <div className="switch-link">
-        Already registered? <Link to="/partner-login">Login</Link>
       </div>
     </div>
   );

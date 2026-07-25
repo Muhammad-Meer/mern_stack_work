@@ -9,17 +9,44 @@ const Profile = () => {
   const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [foods, setFoods] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
+    if (!id) {
+      navigate('/');
+      return;
+    }
+
     axios.get(`${API}/api/food-partner/${id}`)
       .then(res => {
         setProfile(res.data.partner);
         setFoods(res.data.foods || []);
       })
-      .catch(() => navigate('/'));
+      .catch(() => {
+        setError('Partner not found');
+      })
+      .finally(() => setLoading(false));
   }, [id, navigate]);
 
-  if (!profile) return <div className="profile-loading">Loading...</div>;
+  if (loading) {
+    return (
+      <div className="profile-page">
+        <div className="profile-loading">Loading...</div>
+      </div>
+    );
+  }
+
+  if (error || !profile) {
+    return (
+      <div className="profile-page">
+        <div className="profile-loading">
+          <p>{error || 'Partner not found'}</p>
+          <button className="back-btn" onClick={() => navigate('/')}>Back to Home</button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="profile-page">
@@ -42,20 +69,24 @@ const Profile = () => {
       </div>
       <div className="profile-foods">
         <h2>Our Meals</h2>
-        <div className="foods-grid">
-          {foods.map(food => (
-            <div key={food._id} className="food-card">
-              <video src={food.video} muted loop playsInline
-                onMouseEnter={e => e.target.play()}
-                onMouseLeave={e => e.target.pause()}
-              />
-              <div className="food-card-info">
-                <h3>{food.name}</h3>
-                <p>{food.description}</p>
+        {foods.length === 0 ? (
+          <p style={{ color: '#777', textAlign: 'center', padding: '40px 0' }}>No meals uploaded yet.</p>
+        ) : (
+          <div className="foods-grid">
+            {foods.map(food => (
+              <div key={food._id} className="food-card">
+                <video src={food.video} muted loop playsInline
+                  onMouseEnter={e => e.target.play()}
+                  onMouseLeave={e => { e.target.pause(); e.target.currentTime = 0; }}
+                />
+                <div className="food-card-info">
+                  <h3>{food.name}</h3>
+                  <p>{food.description}</p>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
       <button className="back-btn" onClick={() => navigate('/')}>Back to Home</button>
     </div>

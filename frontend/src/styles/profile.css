@@ -71,7 +71,7 @@
 }
 
 .profile-foods {
-  max-width: 800px;
+  max-width: 900px;
   margin: 0 auto;
   padding: 24px 16px;
 }
@@ -92,12 +92,13 @@
   background: #fff;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  transition: transform 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .food-card:hover {
   transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
 .food-card video {
@@ -138,4 +139,30 @@
 
 .back-btn:hover {
   background: #c92d3a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(226, 55, 68, 0.3);
+}
+
+@media (min-width: 768px) {
+  .profile-header {
+    padding: 60px 20px 40px;
+  }
+
+  .profile-avatar {
+    width: 120px;
+    height: 120px;
+  }
+
+  .profile-header h1 {
+    font-size: 28px;
+  }
+
+  .profile-foods {
+    padding: 32px 24px;
+  }
+
+  .foods-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
 }

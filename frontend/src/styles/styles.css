@@ -1,15 +1,8 @@
 @import './theme.css';
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Segoe UI', system-ui, sans-serif;
-  background: linear-gradient(135deg, #c0b9b7e7 0%, #f8f9fae1 100%);
+.auth-page {
   min-height: 100vh;
+  background: linear-gradient(135deg, #c0b9b7e7 0%, #f8f9fae1 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -35,6 +28,7 @@ body {
   font-size: 28px;
   color: var(--text);
   margin-bottom: 8px;
+  font-weight: 700;
 }
 
 .auth-header p {
@@ -60,19 +54,28 @@ body {
   font-weight: 500;
 }
 
-.input-group input {
+.input-group input,
+.input-group textarea {
   padding: 14px 16px;
   border: 1.5px solid var(--border);
   border-radius: 8px;
   font-size: 16px;
   background: var(--input-bg);
   transition: all 0.3s;
+  color: var(--text);
 }
 
-.input-group input:focus {
+.input-group input:focus,
+.input-group textarea:focus {
   outline: none;
   border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(226, 55, 68, 0.1);
+  background: #fff;
+}
+
+.input-group input::placeholder,
+.input-group textarea::placeholder {
+  color: var(--text-muted);
 }
 
 .btn {
@@ -91,6 +94,11 @@ body {
 .btn:hover {
   background: var(--primary-dark);
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(226, 55, 68, 0.3);
+}
+
+.btn:active {
+  transform: translateY(0);
 }
 
 .switch-link {
@@ -104,13 +112,15 @@ body {
   color: var(--primary);
   text-decoration: none;
   font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s;
 }
 
 .switch-link a:hover {
+  color: var(--primary-dark);
   text-decoration: underline;
 }
 
-/* Role specific small badge */
 .role-badge {
   display: inline-block;
   padding: 4px 12px;
@@ -120,4 +130,14 @@ body {
   font-size: 13px;
   font-weight: 600;
   margin-bottom: 16px;
+}
+
+@media (min-width: 768px) {
+  .auth-container {
+    padding: 48px 40px;
+  }
+
+  .auth-header h1 {
+    font-size: 32px;
+  }
 }
