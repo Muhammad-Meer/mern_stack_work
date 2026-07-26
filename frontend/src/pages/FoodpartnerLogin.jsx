@@ -20,18 +20,27 @@ const PartnerLogin = () => {
 
     setLoading(true);
     try {
-      await axios.post(
-        `${API}/api/auth/food-partner/login`,
-        { email, password },
-        { withCredentials: true }
-      );
-      navigate("/create-food");
+      // await axios.post(
+      //   `${API}/api/auth/food-partner/login`,
+      //   { email, password },
+      //   { withCredentials: true }
+      // );
+      // navigate("/create-food");
+      const res = await axios.post(
+  `${API}/api/auth/food-partner/login`,
+  { email, password },
+  { withCredentials: true }
+);
+ navigate("/create-food");
+
+console.log(res.data);
     } catch (error) {
       alert(error.response?.data?.message || "Login failed");
     } finally {
       setLoading(false);
     }
   };
+  
 
   return (
     <div className="auth-page">
