@@ -5,6 +5,7 @@ const {
   userRegisterController,
   userLoginController,
   userLogoutController,
+  userProfileController,
   FoodPartnerRegisterController,
   FoodPartnerLoginController,
   FoodPartnerLogoutController
@@ -19,6 +20,8 @@ authRouter.post('/user/register', userRegisterController);
 authRouter.post('/user/login', userLoginController);
 
 authRouter.get('/user/logout', userLogoutController);
+
+authRouter.get('/profile', userProfileController);
 
 
 
